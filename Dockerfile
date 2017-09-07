@@ -24,9 +24,11 @@ ENV CONDA_BUILD_VERSION  3.0.14
 ARG CONDA_PACKAGES
 ENV CONDA_PACKAGES
 
+# Jenkins Agent (?)
 ARG AGENT_VERSION=3.10
 ARG AGENT_WORKDIR=${OPT}/agent
 
+# Toolchain
 RUN yum install -y \
         openssh-server \
         curl \
@@ -48,20 +50,23 @@ RUN yum install -y \
         mesa-libGLU \
     && yum clean all
 
+# SSH Server configuration
+# Create 'jenkins' user
 RUN ssh-keygen -f /etc/ssh/ssh_host_rsa_key -N '' -t rsa \
     && ssh-keygen -f /etc/ssh/ssh_host_dsa_key -N '' -t dsa \
     && groupadd jenkins \
     && useradd -g jenkins -m -d $HOME -s /bin/bash jenkins \
     && echo "jenkins:jenkins" | chpasswd
 
+# Install Miniconda
 WORKDIR ${OPT}
-
 RUN curl -q -O ${MC_URL}/${MC_INSTALLER} \
     && bash ${MC_INSTALLER} -b -p ${MC_PATH} \
     && rm -rf ${MC_INSTALLER} \
     && echo export PATH="${MC_PATH}/bin:\${PATH}" > /etc/profile.d/conda.sh &&
 
-
+# Configure Conda
+# Reset permissions
 ENV PATH "${MC_PATH}/bin:${PATH}"
 RUN conda install --yes --quiet \
         conda=${CONDA_VERSION} \
