@@ -63,7 +63,7 @@ WORKDIR ${OPT}
 RUN curl -q -O ${MC_URL}/${MC_INSTALLER} \
     && bash ${MC_INSTALLER} -b -p ${MC_PATH} \
     && rm -rf ${MC_INSTALLER} \
-    && echo export PATH="${MC_PATH}/bin:\${PATH}" > /etc/profile.d/conda.sh &&
+    && echo export PATH="${MC_PATH}/bin:\${PATH}" > /etc/profile.d/conda.sh
 
 # Configure Conda
 # Reset permissions
