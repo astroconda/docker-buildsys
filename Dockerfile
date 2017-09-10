@@ -1,32 +1,31 @@
 FROM centos:6.9
 
-# Generic Globals
-ENV OPT /opt
-ENV HOME /home/jenkins
+# Declare build-time environment
 
 # Miniconda
-ARG MC_VERSION
-ENV MC_VERSION 4.3.21
-ARG MC_PLATFORM
-ENV MC_PLATFORM Linux
-ARG MC_ARCH
-ENV MC_ARCH x86_64
-ARG MC_URL
-ENV MC_URL https://repo.continuum.io/miniconda
-ENV MC_INSTALLER Miniconda3-${MC_VERSION}-${MC_PLATFORM}-${MC_ARCH}.sh
-ENV MC_PATH ${OPT}/conda
+ARG MC_VERSION=4.3.21
+ARG MC_PLATFORM=Linux
+ARG MC_ARCH=x86_64
+ARG MC_URL=https://repo.continuum.io/miniconda
 
-# Conda Root
-ARG CONDA_VERSION
-ENV CONDA_VERSION 4.3.25
-ARG CONDA_BUILD_VERSION
-ENV CONDA_BUILD_VERSION  3.0.14
+# Conda root
+ARG CONDA_VERSION=4.3.25
+ARG CONDA_BUILD_VERSION=3.0.14
 ARG CONDA_PACKAGES
-ENV CONDA_PACKAGES ${CONDA_PACKAGES}
 
-# Jenkins Agent (?)
-ARG AGENT_VERSION=3.10
-ARG AGENT_WORKDIR=${OPT}/agent
+# Declare environment
+ENV OPT=/opt \
+    HOME=/home/jenkins
+
+ENV MC_VERSION=${MC_VERSION} \
+    MC_PLATFORM=${MC_PLATFORM} \
+    MC_ARCH=${MC_ARCH} \
+    MC_URL=${MC_URL} \
+    MC_INSTALLER=Miniconda3-${MC_VERSION}-${MC_PLATFORM}-${MC_ARCH}.sh \
+    MC_PATH=${OPT}/conda \
+    CONDA_VERSION=${CONDA_VERSION} \
+    CONDA_BUILD_VERSION=${CONDA_BUILD_VERSION} \
+    CONDA_PACKAGES=${CONDA_PACKAGES}
 
 # Toolchain
 RUN yum install -y \
@@ -59,7 +58,6 @@ RUN ssh-keygen -f /etc/ssh/ssh_host_rsa_key -N '' -t rsa \
     && echo "jenkins:jenkins" | chpasswd
 
 # Install Miniconda
-WORKDIR ${OPT}
 RUN curl -q -O ${MC_URL}/${MC_INSTALLER} \
     && bash ${MC_INSTALLER} -b -p ${MC_PATH} \
     && rm -rf ${MC_INSTALLER} \
@@ -72,9 +70,7 @@ RUN conda install --yes --quiet \
         conda=${CONDA_VERSION} \
         conda-build=${CONDA_BUILD_VERSION} \
         ${CONDA_PACKAGES} \
-    && mkdir -p ${HOME}/.jenkins \
-    && mkdir -p ${AGENT_WORKDIR} \
-    && chown -R jenkins: ${OPT} ${HOME} ${AGENT_WORKDIR}
+    && chown -R jenkins: ${OPT} ${HOME}
 
 WORKDIR ${HOME}
 
