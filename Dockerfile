@@ -58,7 +58,6 @@ RUN ssh-keygen -f /etc/ssh/ssh_host_rsa_key -N '' -t rsa \
     && echo "jenkins:jenkins" | chpasswd
 
 # Install Miniconda
-WORKDIR ${OPT}
 RUN curl -q -O ${MC_URL}/${MC_INSTALLER} \
     && bash ${MC_INSTALLER} -b -p ${MC_PATH} \
     && rm -rf ${MC_INSTALLER} \
