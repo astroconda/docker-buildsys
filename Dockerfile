@@ -29,7 +29,7 @@ ENV PYTHONUNBUFFERED=1 \
     CONDA_PACKAGES=${CONDA_PACKAGES}
 
 # Toolchain
-RUN yum install -y \
+RUN yum update -y && yum install -y \
         openssh-server \
         curl \
         wget \
@@ -52,7 +52,8 @@ RUN yum install -y \
 
 # SSH Server configuration
 # Create 'jenkins' user
-RUN ssh-keygen -f /etc/ssh/ssh_host_rsa_key -N '' -t rsa \
+RUN sed -i 's|#UseDNS.*|UseDNS no|' /etc/ssh/sshd_config \
+    && ssh-keygen -f /etc/ssh/ssh_host_rsa_key -N '' -t rsa \
     && ssh-keygen -f /etc/ssh/ssh_host_dsa_key -N '' -t dsa \
     && groupadd jenkins \
     && useradd -g jenkins -m -d $HOME -s /bin/bash jenkins \
@@ -67,9 +68,11 @@ RUN curl -q -O ${MC_URL}/${MC_INSTALLER} \
 # Configure Conda
 # Reset permissions
 ENV PATH "${MC_PATH}/bin:${PATH}"
-RUN conda install --yes --quiet \
+RUN conda config --set auto_update_conda false \
+    && conda install --yes --quiet \
         conda=${CONDA_VERSION} \
         conda-build=${CONDA_BUILD_VERSION} \
+        git \
         ${CONDA_PACKAGES} \
     && chown -R jenkins: ${OPT} ${HOME}
 
@@ -77,5 +80,4 @@ WORKDIR ${HOME}
 
 EXPOSE 22
 
-CMD ["/usr/sbin/sshd", "-D"]
-
+CMD ["/bin/bash"]
