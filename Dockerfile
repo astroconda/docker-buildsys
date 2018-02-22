@@ -3,14 +3,14 @@ FROM centos:6.9
 # Declare build-time environment
 
 # Miniconda
-ARG MC_VERSION=4.3.21
+ARG MC_VERSION=4.4.10
 ARG MC_PLATFORM=Linux
 ARG MC_ARCH=x86_64
 ARG MC_URL=https://repo.continuum.io/miniconda
 
 # Conda root
-ARG CONDA_VERSION=4.3.25
-ARG CONDA_BUILD_VERSION=3.0.14
+ARG CONDA_VERSION=4.4.10
+ARG CONDA_BUILD_VERSION=3.5.0
 ARG CONDA_PACKAGES
 
 # Declare environment
