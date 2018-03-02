@@ -76,6 +76,9 @@ RUN conda config --set auto_update_conda false \
         ${CONDA_PACKAGES} \
     && chown -R jenkins: ${OPT} ${HOME}
 
+# Inject custom handlers
+ADD with_env /usr/local/bin
+
 WORKDIR ${HOME}
 
 EXPOSE 22

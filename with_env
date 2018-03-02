@@ -1,0 +1,23 @@
+#!/bin/bash
+set +x
+environ=base
+commands=()
+
+while [[ $# > 0 ]]
+do
+    key="$1"
+    case $key in
+        -n|--name)
+            environ="$2"
+            shift 2
+            ;;
+        *)
+            commands+=("$1")
+            shift
+            ;;
+    esac
+done
+
+source activate $environ
+${commands[@]}
+exit $?
