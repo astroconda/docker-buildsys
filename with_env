@@ -19,5 +19,5 @@ do
 done
 
 source activate $environ
-${commands[@]}
+"${commands[@]}"
 exit $?
