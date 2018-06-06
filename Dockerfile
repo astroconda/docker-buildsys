@@ -75,6 +75,9 @@ RUN curl -q -O ${MC_URL}/${MC_INSTALLER} \
 ENV PATH "${MC_PATH}/bin:${PATH}"
 USER jenkins
 RUN conda config --set auto_update_conda false \
+    && conda config --set always_yes true \
+    && conda config --set quiet true \
+    && conda config --set rollback_enabled false \
     && conda install --yes --quiet \
         conda=${CONDA_VERSION} \
         conda-build=${CONDA_BUILD_VERSION} \
