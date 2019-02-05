@@ -86,10 +86,14 @@ RUN conda config --set auto_update_conda false \
 
 # Inject custom handlers
 USER root
+
+RUN curl -L https://github.com/krallin/tini/releases/download/v0.18.0/tini-static-amd64 > /usr/bin/tini \
+    && chmod +x /usr/bin/tini
+
 ADD with_env /usr/local/bin
 
 WORKDIR ${HOME}
 
 EXPOSE 22
-
+ENTRYPOINT ["tini", "-g", "--", "timeout", "-sKILL", "45m"]
 CMD ["/bin/bash"]
