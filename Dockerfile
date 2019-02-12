@@ -91,9 +91,10 @@ RUN curl -L https://github.com/krallin/tini/releases/download/v0.18.0/tini-stati
     && chmod +x /usr/bin/tini
 
 ADD with_env /usr/local/bin
+ADD spawner.sh /usr/local/bin
 
 WORKDIR ${HOME}
 
 EXPOSE 22
-ENTRYPOINT ["tini", "-g", "--", "timeout", "-sKILL", "45m"]
+ENTRYPOINT ["tini", "-g", "--", "spawner.sh"]
 CMD ["/bin/bash"]
